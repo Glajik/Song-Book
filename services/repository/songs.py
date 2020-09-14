@@ -80,4 +80,4 @@ def one(id):
 
 def all():
     ids = [item['id'] for item in SONGS]
-    return list(map(one, ids))
+    return { "songs": list(map(one, ids)) }
