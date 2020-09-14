@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
 // развертываем базу данных
         songDatabase = Room.databaseBuilder(getApplicationContext(), SongDatabase.class, "songsDb" )
                 .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
                 .build();
 
         adapter.reload();

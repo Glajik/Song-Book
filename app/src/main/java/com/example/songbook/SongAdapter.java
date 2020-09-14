@@ -119,34 +119,28 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         filtered = songsDb;
 
         loadSong();  // подумать,  может стоит перенести этот метод в onCreate или даже в mainActivity
-        // здесь реализовать метод,  который обновит в базе данных песни
-
+        // возможно,  нужно сделать проверку,  если базы еще нет,  то сначала запустить load
         songsDb = songs;
 
 
-        // здесть реализовать метод,  который из базы sql получит массив songs
 
 
     }
-
-
     public void loadSong() {
 
-        String url = "https://pokeapi.co/api/v2/pokemon/?limit=151";
+        String url = "https://song-book-289222.ew.r.appspot.com/api/songs/1";
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(JSONObject result) {
                 try {
-                    JSONArray results = response.getJSONArray("results");
-                    for (int i = 0; i < results.length(); i++) {
-                        JSONObject result = results.getJSONObject(i);
+
                         Song songTemp = new Song(result.getInt("id"), result.getString("title"),
                                 result.getString("text"), result.getString("description"));
                         songs.add(songTemp);
                         MainActivity.songDatabase.songDao().create(songTemp);
 
 
-                    }
+
                     notifyDataSetChanged();
                 } catch (JSONException e) {
                     Log.e("cs50", "Json error", e);
@@ -162,6 +156,39 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         });
         requestQueue.add(request);
     }
+
+//    public void loadSong() {
+//
+//        String url = "https://song-book-289222.ew.r.appspot.com/api/songs";
+//        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                try {
+//                    JSONArray results = response.getJSONArray("songs");
+//                    for (int i = 0; i < results.length(); i++) {
+//                        JSONObject result = results.getJSONObject(i);
+//                        Song songTemp = new Song(result.getInt("id"), result.getString("title"),
+//                                result.getString("text"), result.getString("description"));
+//                        songs.add(songTemp);
+//                        MainActivity.songDatabase.songDao().create(songTemp);
+//
+//
+//                    }
+//                    notifyDataSetChanged();
+//                } catch (JSONException e) {
+//                    Log.e("cs50", "Json error", e);
+//                }
+//
+//            }
+//        }, new Response.ErrorListener() {
+//
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.e("cs50", "Song list error");
+//            }
+//        });
+//        requestQueue.add(request);
+//    }
 
 
     @NonNull
