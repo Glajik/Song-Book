@@ -115,11 +115,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     SongAdapter(Context context) {
         requestQueue = Volley.newRequestQueue(context);
-
+        // Массиву filtered передаем массив из базы данных
         filtered = songsDb;
-
-        loadSong();  // подумать,  может стоит перенести этот метод в onCreate или даже в mainActivity
+        // загружаем в базу данных массив с song
+        loadSong();
         // возможно,  нужно сделать проверку,  если базы еще нет,  то сначала запустить load
+
+        // не помню,  надо подумать
         songsDb = songs;
 
 
@@ -127,7 +129,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     }
      public void loadSong() {
-
+        // ToDo
+         // надо решить что делать,  если база уже создана.
         String url = "https://song-book-289222.ew.r.appspot.com/api/songs";
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
