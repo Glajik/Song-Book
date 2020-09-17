@@ -8,7 +8,7 @@ import java.util.List;
 @Dao
 public interface SongDao {
     @Insert
-    void create(Song song);
+    void insert(Song song);
 
     @Query("SELECT*FROM songs ORDER BY title")
     List<Song> getAllsongs();
@@ -18,4 +18,7 @@ public interface SongDao {
 
     @Query("DELETE FROM songs WHERE id= :id")
     void delete(int id);
+
+    @Query("DELETE FROM songs")
+    void deleteAll();
 }

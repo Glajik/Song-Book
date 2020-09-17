@@ -94,7 +94,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
                     //мой добавленный Toast
                     String message = "Good choice";
-                    Toast.makeText(v.getContext(), message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(v.getContext(), message, Toast.LENGTH_SHORT).show();
 
 
                     v.getContext().startActivity(intent);
@@ -116,26 +116,35 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     SongAdapter(Context context) {
         requestQueue = Volley.newRequestQueue(context);
         // Массиву filtered передаем массив из базы данных
-        filtered = songsDb;
+
+        if(MainActivity.songDatabase != null) {
+            songsDb = MainActivity.songDatabase.songDao().getAllsongs();
+            filtered = songsDb;
+        }
+
         // загружаем в базу данных массив с song
         loadSong();
         // возможно,  нужно сделать проверку,  если базы еще нет,  то сначала запустить load
+        reload();
+        // ToDo
+        // Понять,  почему не загружается в songs
+        //filtered = songs;
 
-        // не помню,  надо подумать
-        songsDb = songs;
+        //ToDo
+        // не работает русский язык в фильтре.
+
 
 
 
 
     }
      public void loadSong() {
-        // ToDo
-         // надо решить что делать,  если база уже создана.
+
         String url = "https://song-book-289222.ew.r.appspot.com/api/songs";
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-             //   Log.d("cs50", response.toString());
+               Log.d("cs50", "response is: " + response.toString());
                 try {
                     JSONArray results = response.getJSONArray("songs");
                     for (int i = 0; i < results.length(); i++) {
@@ -143,7 +152,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                         Song songTemp = new Song(result.getInt("id"), result.getString("title"),
                                 result.getString("text"), result.getString("description"));
                         songs.add(songTemp);
-                        MainActivity.songDatabase.songDao().create(songTemp);
+
+                        MainActivity.songDatabase.songDao().deleteAll(); // Сначала очищаем базу данных перед вставкой.
+                        MainActivity.songDatabase.songDao().insert(songTemp);
                     }
                     notifyDataSetChanged();
                 } catch (JSONException e) {
@@ -156,7 +167,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("cs50", "Song list error");
-               // Log.e("cs50", error.toString());
+               Log.e("cs50", error.toString());
             }
         });
         requestQueue.add(request);
@@ -193,6 +204,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     }
 
     public void reload() {
+
+        //ToDo
+        // подумать,  точно ли это тут нужно?
         songsDb = MainActivity.songDatabase.songDao().getAllsongs();
         notifyDataSetChanged();
     }

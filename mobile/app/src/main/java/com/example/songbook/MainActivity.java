@@ -54,16 +54,18 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        songDatabase = Room.databaseBuilder(getApplicationContext(), SongDatabase.class, "songsDb" )
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                .build();
+
         recyclerView = findViewById(R.id.recycler_view);
         adapter = new SongAdapter(getApplicationContext());
         layoutManager = new LinearLayoutManager( this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
 
-        songDatabase = Room.databaseBuilder(getApplicationContext(), SongDatabase.class, "songsDb" )
-                      .allowMainThreadQueries()
-                    .fallbackToDestructiveMigration()
-                    .build();
+
 
 
 
