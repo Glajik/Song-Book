@@ -144,7 +144,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-               Log.d("cs50", "response is: " + response.toString());
+               //Log.d("cs50", "response is: " + response.toString());
+                MainActivity.songDatabase.songDao().deleteAll(); // Сначала очищаем базу данных перед вставкой.
                 try {
                     JSONArray results = response.getJSONArray("songs");
                     for (int i = 0; i < results.length(); i++) {
@@ -153,7 +154,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                                 result.getString("text"), result.getString("description"));
                         songs.add(songTemp);
 
-                        MainActivity.songDatabase.songDao().deleteAll(); // Сначала очищаем базу данных перед вставкой.
+
                         MainActivity.songDatabase.songDao().insert(songTemp);
                     }
                     notifyDataSetChanged();
@@ -207,7 +208,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
         //ToDo
         // подумать,  точно ли это тут нужно?
-        songsDb = MainActivity.songDatabase.songDao().getAllsongs();
+        //songsDb = MainActivity.songDatabase.songDao().getAllsongs();
         notifyDataSetChanged();
     }
 
