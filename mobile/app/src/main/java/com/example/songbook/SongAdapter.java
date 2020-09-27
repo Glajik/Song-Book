@@ -26,7 +26,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> implements Filterable {
@@ -117,22 +122,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         requestQueue = Volley.newRequestQueue(context);
         // Массиву filtered передаем массив из базы данных
 
-        if(MainActivity.songDatabase != null) {
+        if(MainActivity.songDatabase.songDao() != null) {
             songsDb = MainActivity.songDatabase.songDao().getAllsongs();
+            Log.d("cs50", songsDb.toString() + "\n" + MainActivity.songDatabase.songDao().toString() );
             filtered = songsDb;
         }
-
         // загружаем в базу данных массив с song
         loadSong();
-        // возможно,  нужно сделать проверку,  если базы еще нет,  то сначала запустить load
-        reload();
-        // ToDo
-        // Понять,  почему не загружается в songs
-        //filtered = songs;
-
-        //ToDo
-        // не работает русский язык в фильтре.
-
 
 
 
@@ -144,19 +140,35 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-               //Log.d("cs50", "response is: " + response.toString());
-                MainActivity.songDatabase.songDao().deleteAll(); // Сначала очищаем базу данных перед вставкой.
-                try {
+               try {
                     JSONArray results = response.getJSONArray("songs");
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject result = results.getJSONObject(i);
                         Song songTemp = new Song(result.getInt("id"), result.getString("title"),
-                                result.getString("text"), result.getString("description"));
+                                result.getString("text"), result.getString("description"),
+                                result.getString("created_at"), result.getString("updated_at"));
                         songs.add(songTemp);
+                        //my new code Compare dates of song and insert the lastest version;
+                        //update(songsDb.get(i), songTemp);
 
 
-                        MainActivity.songDatabase.songDao().insert(songTemp);
                     }
+                    if(songs.isEmpty()){
+                        Log.d("cs50", "Didn't receive data from server");
+                    }
+                    else {
+                        filtered = songs;
+                    }
+
+                    if(songsDb.size() == songs.size()){
+                        Log.d("cs50", "local and server databases are equal");
+
+
+                    }
+                    else {
+                        long[] quanityUpdates = MainActivity.songDatabase.songDao().insert(songs);
+                        Log.d("cs50", String.valueOf(quanityUpdates));
+                                           }
                     notifyDataSetChanged();
                 } catch (JSONException e) {
                     Log.e("cs50", "Json error", e);
@@ -164,7 +176,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
             }
         }, new Response.ErrorListener() {
-
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("cs50", "Song list error");
@@ -172,27 +183,20 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             }
         });
         requestQueue.add(request);
-    }
+        }
 
 
     @NonNull
     @Override
     public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_row, parent, false);
         return new SongViewHolder(view);
-
     }
 
     @Override
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
-
-
         Song current = filtered.get(position);
-
-
         holder.textView.setText(current.getTitle());
-        // потом добавить попробовать сюда еще через append текст песни,  чтобы поиск по словам песни тоже был.
         holder.containerView.setTag(current);
 
     }
@@ -200,17 +204,29 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     @Override
     public int getItemCount() {
         return filtered.size();
-
-
     }
 
     public void reload() {
 
-        //ToDo
-        // подумать,  точно ли это тут нужно?
-        //songsDb = MainActivity.songDatabase.songDao().getAllsongs();
+
         notifyDataSetChanged();
     }
+    //this metod compare dates of songs with equal id and update the latest version of it
+//    public void update(Song songDb, Song songs){
+//        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss");
+//        try {
+//            Date dateSongDb = formatter.parse(songDb.getUpdated_at());
+//            Date dateSong = formatter.parse(songs.getUpdated_at());
+//            if (dateSongDb.before(dateSong)){
+//                MainActivity.songDatabase.songDao().update(songs);
+//
+//            }
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+
+//    }
+
 
 }
 

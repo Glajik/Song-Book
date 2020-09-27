@@ -65,18 +65,9 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
 
-
-
-
-
-
-
-
-
-
-
         adapter.reload();
     }
+
 
     @Override
     protected void onResume() {
