@@ -26,17 +26,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> implements Filterable {
-
-
+//
+    SongAdapter(Context context) {
+        songs = (new SongLoader(context).getSongs());
+        Log.d("cs50", "songs from server " + songs.toString());
+////            songsDb = SongRepository
+////            filtered = songsDb;
+//        //загружаем в базу данных массив с song
+        }
+    private List<Song> songs = new ArrayList<>();
     private List<Song> filtered = new ArrayList<>();
 
 
@@ -113,77 +115,60 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     }
 
-    private List<Song> songs = new ArrayList<>();
-    private List<Song> songsDb = new ArrayList<>();
-    private RequestQueue requestQueue;
+//    private List<Song> songs;
+//    private List<Song> songsDb = new ArrayList<>();
+   // private RequestQueue requestQueue;
 
-
-    SongAdapter(Context context) {
-        requestQueue = Volley.newRequestQueue(context);
-        // Массиву filtered передаем массив из базы данных
-
-        if(MainActivity.songDatabase.songDao() != null) {
-            songsDb = MainActivity.songDatabase.songDao().getAllsongs();
-            Log.d("cs50", songsDb.toString() + "\n" + MainActivity.songDatabase.songDao().toString() );
-            filtered = songsDb;
-        }
-        // загружаем в базу данных массив с song
-        loadSong();
-
-
-
-
-    }
-     public void loadSong() {
-
-        String url = "https://song-book-289222.ew.r.appspot.com/api/songs";
-        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-               try {
-                    JSONArray results = response.getJSONArray("songs");
-                    for (int i = 0; i < results.length(); i++) {
-                        JSONObject result = results.getJSONObject(i);
-                        Song songTemp = new Song(result.getInt("id"), result.getString("title"),
-                                result.getString("text"), result.getString("description"),
-                                result.getString("created_at"), result.getString("updated_at"));
-                        songs.add(songTemp);
-                        //my new code Compare dates of song and insert the lastest version;
-                        //update(songsDb.get(i), songTemp);
-
-
-                    }
-                    if(songs.isEmpty()){
-                        Log.d("cs50", "Didn't receive data from server");
-                    }
-                    else {
-                        filtered = songs;
-                    }
-
-                    if(songsDb.size() == songs.size()){
-                        Log.d("cs50", "local and server databases are equal");
-
-
-                    }
-                    else {
-                        long[] quanityUpdates = MainActivity.songDatabase.songDao().insert(songs);
-                        Log.d("cs50", String.valueOf(quanityUpdates));
-                                           }
-                    notifyDataSetChanged();
-                } catch (JSONException e) {
-                    Log.e("cs50", "Json error", e);
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("cs50", "Song list error");
-               Log.e("cs50", error.toString());
-            }
-        });
-        requestQueue.add(request);
-        }
+//     public void loadSong() {
+//
+//        String url = "https://song-book-289222.ew.r.appspot.com/api/songs";
+//        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//               try {
+//                    JSONArray results = response.getJSONArray("songs");
+//                    for (int i = 0; i < results.length(); i++) {
+//                        JSONObject result = results.getJSONObject(i);
+//                        Song songTemp = new Song(result.getInt("id"), result.getString("title"),
+//                                result.getString("text"), result.getString("description"),
+//                                result.getString("created_at"), result.getString("updated_at"));
+//                        songs.add(songTemp);
+//                        //my new code Compare dates of song and insert the lastest version;
+//                        //update(songsDb.get(i), songTemp);
+//
+//
+//                    }
+//                    if(songs.isEmpty()){
+//                        Log.d("cs50", "Didn't receive data from server");
+//                    }
+//                    else {
+//                        filtered = songs;
+//                    }
+//
+//                    if(songsDb.size() == songs.size()){
+//                        Log.d("cs50", "local and server databases are equal");
+//
+//
+//                    }
+//                    else {
+//                        long[] quanityUpdates = MainActivity.songDatabase.songDao().insert(songs);
+//                        Log.d("cs50", String.valueOf(quanityUpdates));
+//                                           }
+//                    notifyDataSetChanged();
+//                } catch (JSONException e) {
+//                    Log.e("cs50", "Json error", e);
+//                }
+//
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.e("cs50", "Song list error");
+//               Log.e("cs50", error.toString());
+//            }
+//        });
+//        requestQueue.add(request);
+//        }
 
 
     @NonNull
@@ -197,7 +182,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
         Song current = filtered.get(position);
         holder.textView.setText(current.getTitle());
-        holder.containerView.setTag(current);
+        //holder.containerView.setTag(current);
 
     }
 
@@ -206,9 +191,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         return filtered.size();
     }
 
-    public void reload() {
-
-
+    public void reload(List<Song> songs) {
+        this.songs = songs;
         notifyDataSetChanged();
     }
     //this metod compare dates of songs with equal id and update the latest version of it

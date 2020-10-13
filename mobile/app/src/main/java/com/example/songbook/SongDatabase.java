@@ -11,7 +11,6 @@ public abstract class SongDatabase extends RoomDatabase {
     public abstract SongDao songDao();
 
     private static SongDatabase instance;
-    public abstract SongDao noteDao();
 
     public static synchronized SongDatabase getInstance(Context context) {
         if (instance == null) {
