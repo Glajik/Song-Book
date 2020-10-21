@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
     private SongViewModel songViewModel;
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
 
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager( this));
-        adapter = new SongAdapter(this);
+        adapter = new SongAdapter();
         recyclerView.setAdapter(adapter);
 
         songViewModel = new ViewModelProvider(this,
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
     @Override
     protected void onResume() {
         super.onResume();
-        //adapter.reload(songs);
+
 
     }
 

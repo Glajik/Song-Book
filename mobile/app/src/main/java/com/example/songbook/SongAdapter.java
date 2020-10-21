@@ -31,9 +31,8 @@ import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> implements Filterable {
 //
-    SongAdapter(Context context) {
-        songs = (new SongLoader(context).getSongs());
-        Log.d("cs50", "songs from server " + songs.toString());
+    SongAdapter() {
+
 ////            songsDb = SongRepository
 ////            filtered = songsDb;
 //        //загружаем в базу данных массив с song

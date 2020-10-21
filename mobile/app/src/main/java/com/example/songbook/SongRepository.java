@@ -6,28 +6,45 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SongRepository {
     private SongDao songDao;
     private LiveData<List<Song>> allSongs;
-    private List<Song> songsFromServer;
+    public static List<Song> songsFromServer = new ArrayList<>();
+    SongLoader songLoader;
 
-    public SongRepository(Application application) {
+    public SongRepository(Application application)  {
         SongDatabase database = SongDatabase.getInstance(application);
         songDao = database.songDao();
 
-//         songsFromServer = (new SongLoader(application).getSongs());
-//            allSongs = (LiveData<List<Song>>) songsFromServer;
-//            Log.d("cs50", "songs from server " + songsFromServer.toString());
-//            insert(songsFromServer);
 
-            allSongs = songDao.getAllSongs();
-            Log.d("cs50", "songs from DB " + allSongs.toString());
+        songLoader = new SongLoader(application);
+        songLoader.loadSong();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                while ( songsFromServer.size() == 0){
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
 
+                insert(songsFromServer);
+            }
+        });
+        thread.start();
 
+        allSongs = songDao.getAllSongs();
+        Log.d("cs50", "songs from DB " + allSongs.getValue());
     }
+
+
     public void insert(List<Song> songs) {
         new InsertSongAsyncTask(songDao).execute(songs);
     }
@@ -44,6 +61,10 @@ public class SongRepository {
         return allSongs;
     }
 
+
+
+
+
     private static class InsertSongAsyncTask extends AsyncTask<List<Song>, Void, Void> {
         private SongDao songDao;
         private InsertSongAsyncTask(SongDao songDao) {
@@ -52,6 +73,7 @@ public class SongRepository {
         @Override
         protected Void doInBackground(List<Song>... songs) {
             songDao.insert(songs[0]);
+            Log.d("cs50", "inserted " + songs[0]);
             return null;
         }
     }

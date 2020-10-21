@@ -2,6 +2,7 @@ package com.example.songbook;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -11,13 +12,15 @@ import java.util.List;
 
 public class SongViewModel extends AndroidViewModel {
 
-    private SongRepository repository;
+    public SongRepository repository;
     private LiveData<List<Song>> allSongs;
 
-    public SongViewModel(@NonNull Application application) {
+
+    public SongViewModel(@NonNull Application application) throws InterruptedException {
         super(application);
         repository = new SongRepository(application);
         allSongs = repository.getAllSongs();
+        Log.d("cs50", "SongViewModel allSongs = " + allSongs.getValue());
     }
 
     public void insert(List<Song> songs) {

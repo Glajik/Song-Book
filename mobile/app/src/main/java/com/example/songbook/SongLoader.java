@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,20 +23,18 @@ import java.util.List;
 
 public class SongLoader {
 
-    public SongLoader(Context context){
+    public SongLoader(Context context) {
         requestQueue = Volley.newRequestQueue(context);
-        loadSong();
-
 
     }
 
     public List<Song> songs = new ArrayList<>();
     private RequestQueue requestQueue;
 
-    public List<Song> getSongs(){
-        Log.d("cs50", "size of list " + songs.size());
+    public List<Song> getSongs () {
 
-        return songs;
+         Log.d("cs50", "size of list " + songs.size());
+                return songs;
     }
 
     public void loadSong() {
@@ -44,15 +45,24 @@ public class SongLoader {
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray results = response.getJSONArray("songs");
-                   // Log.d("cs50", "response is: " + response.toString());
+
+                   Log.d("cs50", "response is: " + response.toString());
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject result = results.getJSONObject(i);
                         Song songTemp = new Song(result.getInt("id"), result.getString("title"),
                                 result.getString("text"), result.getString("description"),
                                 result.getString("created_at"), result.getString("updated_at"));
-                        songs.add(songTemp);
-                        Log.d("cs50", "songTemp:" + songs.size());
+                         Log.d("cs50", "songTemp:" + songs.size());
+                         songs.add(songTemp);
+
+
                     }
+                    SongRepository.songsFromServer = songs;
+                    Log.d("cs50", " Songrepository.songsfromserver = " + SongRepository.songsFromServer.size());
+                    notifyAll();
+
+
+
 
                 } catch (JSONException e) {
                     Log.e("cs50", "Json error", e);
@@ -66,7 +76,8 @@ public class SongLoader {
                 Log.e("cs50", error.toString());
             }
         });
-        requestQueue.add(request);
 
-    }
+        requestQueue.add(request);
+       }
+
 }
