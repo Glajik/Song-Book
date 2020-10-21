@@ -37,7 +37,7 @@ public class SongLoader {
                 return songs;
     }
 
-    public void loadSong() {
+    public synchronized void loadSong() {
 
         String url = "https://song-book-289222.ew.r.appspot.com/api/songs";
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -46,7 +46,7 @@ public class SongLoader {
                 try {
                     JSONArray results = response.getJSONArray("songs");
 
-                   Log.d("cs50", "response is: " + response.toString());
+                  // Log.d("cs50", "response is: " + response.toString());
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject result = results.getJSONObject(i);
                         Song songTemp = new Song(result.getInt("id"), result.getString("title"),
@@ -59,7 +59,7 @@ public class SongLoader {
                     }
                     SongRepository.songsFromServer = songs;
                     Log.d("cs50", " Songrepository.songsfromserver = " + SongRepository.songsFromServer.size());
-                    notifyAll();
+
 
 
 

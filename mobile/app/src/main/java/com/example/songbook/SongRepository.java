@@ -29,7 +29,9 @@ public class SongRepository {
             public synchronized void run() {
                 while ( songsFromServer.size() == 0){
                     try {
-                        wait();
+                        wait(1);
+                        Log.d("cs50", "waiting for data");
+
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -73,7 +75,7 @@ public class SongRepository {
         @Override
         protected Void doInBackground(List<Song>... songs) {
             songDao.insert(songs[0]);
-            Log.d("cs50", "inserted " + songs[0]);
+            Log.d("cs50", "inserted " + songs[0].get(0).getTitle());
             return null;
         }
     }

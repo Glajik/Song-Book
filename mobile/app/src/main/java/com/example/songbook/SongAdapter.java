@@ -181,17 +181,21 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
         Song current = filtered.get(position);
         holder.textView.setText(current.getTitle());
+        Log.d("cs50", "filtered size is " + filtered.size());
         //holder.containerView.setTag(current);
 
     }
 
     @Override
     public int getItemCount() {
+        //Log.d("cs50", "filtered size is " + filtered.size());
         return filtered.size();
+
     }
 
     public void reload(List<Song> songs) {
         this.songs = songs;
+        Log.d("cs50", "reload = " + songs.size());
         notifyDataSetChanged();
     }
     //this metod compare dates of songs with equal id and update the latest version of it
