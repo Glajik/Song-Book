@@ -56,17 +56,18 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
 
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager( this));
+        recyclerView.setHasFixedSize(true);
         adapter = new SongAdapter();
         recyclerView.setAdapter(adapter);
 
         songViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication()))
                 .get(SongViewModel.class);
+
         songViewModel.getAllSongs().observe(this, new Observer<List<Song>>() {
             @Override
             public void onChanged(List<Song> songs) {
                 adapter.reload(songs);
-
             }
         });
     }

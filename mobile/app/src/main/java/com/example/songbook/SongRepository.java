@@ -24,23 +24,27 @@ public class SongRepository {
 
         songLoader = new SongLoader(application);
         songLoader.loadSong();
-        Thread thread = new Thread(new Runnable() {
+        final Thread thread = new Thread(new Runnable() {
             @Override
             public synchronized void run() {
-                while ( songsFromServer.size() == 0){
+                int i = 0;
+                while ( songsFromServer.size() == 0 ){
                     try {
                         wait(1);
-                        Log.d("cs50", "waiting for data");
+                        Log.d("cs50", "waiting for data " + i);
+                        i++;
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-
                 insert(songsFromServer);
+                Thread.currentThread().interrupt();
+
             }
         });
         thread.start();
+
 
         allSongs = songDao.getAllSongs();
         Log.d("cs50", "songs from DB " + allSongs.getValue());
@@ -75,7 +79,7 @@ public class SongRepository {
         @Override
         protected Void doInBackground(List<Song>... songs) {
             songDao.insert(songs[0]);
-            Log.d("cs50", "inserted " + songs[0].get(0).getTitle());
+           // Log.d("cs50", "inserted " + songs[0].get(0).getTitle());
             return null;
         }
     }

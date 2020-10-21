@@ -31,14 +31,12 @@ import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> implements Filterable {
 //
-    SongAdapter() {
-
-////            songsDb = SongRepository
-////            filtered = songsDb;
-//        //загружаем в базу данных массив с song
-        }
     private List<Song> songs = new ArrayList<>();
     private List<Song> filtered = new ArrayList<>();
+
+//    public SongAdapter(){
+//
+//    }
 
 
     @Override
@@ -54,6 +52,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
             if (constraint == null || constraint.length() == 0) {
                 filteredSong.addAll(songs);
+                Log.d("cs50", "songs size is " + filteredSong.size());
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
                 for (Song item : songs) {
@@ -78,14 +77,14 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         }
     }
 
-    public static class SongViewHolder extends RecyclerView.ViewHolder {
+    public class SongViewHolder extends RecyclerView.ViewHolder {
         public LinearLayout containerView;
         public TextView textView;
 
-        SongViewHolder(View view) {
-            super(view);
-            containerView = view.findViewById(R.id.song_row);
-            textView = view.findViewById(R.id.song_row_text_view);
+        SongViewHolder(View itemView) {
+            super(itemView);
+            containerView = itemView.findViewById(R.id.song_row);
+            textView = itemView.findViewById(R.id.song_row_text_view);
 
             containerView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -114,67 +113,14 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     }
 
-//    private List<Song> songs;
-//    private List<Song> songsDb = new ArrayList<>();
-   // private RequestQueue requestQueue;
-
-//     public void loadSong() {
-//
-//        String url = "https://song-book-289222.ew.r.appspot.com/api/songs";
-//        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//               try {
-//                    JSONArray results = response.getJSONArray("songs");
-//                    for (int i = 0; i < results.length(); i++) {
-//                        JSONObject result = results.getJSONObject(i);
-//                        Song songTemp = new Song(result.getInt("id"), result.getString("title"),
-//                                result.getString("text"), result.getString("description"),
-//                                result.getString("created_at"), result.getString("updated_at"));
-//                        songs.add(songTemp);
-//                        //my new code Compare dates of song and insert the lastest version;
-//                        //update(songsDb.get(i), songTemp);
-//
-//
-//                    }
-//                    if(songs.isEmpty()){
-//                        Log.d("cs50", "Didn't receive data from server");
-//                    }
-//                    else {
-//                        filtered = songs;
-//                    }
-//
-//                    if(songsDb.size() == songs.size()){
-//                        Log.d("cs50", "local and server databases are equal");
-//
-//
-//                    }
-//                    else {
-//                        long[] quanityUpdates = MainActivity.songDatabase.songDao().insert(songs);
-//                        Log.d("cs50", String.valueOf(quanityUpdates));
-//                                           }
-//                    notifyDataSetChanged();
-//                } catch (JSONException e) {
-//                    Log.e("cs50", "Json error", e);
-//                }
-//
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.e("cs50", "Song list error");
-//               Log.e("cs50", error.toString());
-//            }
-//        });
-//        requestQueue.add(request);
-//        }
 
 
     @NonNull
     @Override
     public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_row, parent, false);
-        return new SongViewHolder(view);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_row, parent, false);
+        Log.d("cs50", "SongVievHolder has been inflated");
+        return new SongViewHolder(itemView);
     }
 
     @Override
@@ -182,19 +128,20 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         Song current = filtered.get(position);
         holder.textView.setText(current.getTitle());
         Log.d("cs50", "filtered size is " + filtered.size());
-        //holder.containerView.setTag(current);
+        holder.containerView.setTag(current);
 
     }
 
     @Override
     public int getItemCount() {
-        //Log.d("cs50", "filtered size is " + filtered.size());
+       // Log.d("cs50", "filtered size is " + filtered.size());
         return filtered.size();
 
     }
 
     public void reload(List<Song> songs) {
         this.songs = songs;
+        getFilter().filter("");
         Log.d("cs50", "reload = " + songs.size());
         notifyDataSetChanged();
     }
