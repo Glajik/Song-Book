@@ -22,32 +22,9 @@ public class SongRepository {
         songDao = database.songDao();
 
 
-        songLoader = new SongLoader(application);
-        songLoader.loadSong();
-        final Thread thread = new Thread(new Runnable() {
-            @Override
-            public synchronized void run() {
-                int i = 0;
-                while ( songsFromServer.size() == 0 ){
-                    try {
-                        wait(1);
-                        Log.d("cs50", "waiting for data " + i);
-                        i++;
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                insert(songsFromServer);
-                Thread.currentThread().interrupt();
-
-            }
-        });
-        thread.start();
-
-
+        loadSongsFromWeb(application);
         allSongs = songDao.getAllSongs();
-        Log.d("cs50", "songs from DB " + allSongs.getValue());
+        Log.d("cs50", "allSongs from database = " + allSongs.getValue());
     }
 
 
@@ -67,6 +44,37 @@ public class SongRepository {
         return allSongs;
     }
 
+    private void loadSongsFromWeb(Application application) {
+        songLoader = new SongLoader(application);
+        songLoader.loadSong();
+        final Thread thread = new Thread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                int i = 0;
+                while ( songsFromServer.size() == 0 && i < 10000){
+                    try {
+                        wait(1);
+                        Log.d("cs50", "waiting for data " + i);
+                        i++;
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //Проверяем,  если размер массива в локальной базе данных не равен размеру массива,  полученного с сервера,
+                //то всталяем с заменой массив с сервера в локальную базу данных
+                if (allSongs.getValue().size() != songsFromServer.size()) {
+                    Log.d("cs50",  "allSongs: " + allSongs.getValue().toString() +
+                            "      songsfromserver: " + songsFromServer.toString());
+                   insert(songsFromServer);
+                }
+                Thread.currentThread().interrupt();
+
+            }
+        });
+        thread.start();
+    }
+
 
 
 
@@ -79,7 +87,7 @@ public class SongRepository {
         @Override
         protected Void doInBackground(List<Song>... songs) {
             songDao.insert(songs[0]);
-           // Log.d("cs50", "inserted " + songs[0].get(0).getTitle());
+           Log.d("cs50", "inserted " + songs[0].get(0).getTitle() + "  " + songs[0].get(1).getTitle() + "   " + songs[0].get(2).getTitle());
             return null;
         }
     }
@@ -116,4 +124,5 @@ public class SongRepository {
             return null;
         }
     }
+
 }

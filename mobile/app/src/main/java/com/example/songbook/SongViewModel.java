@@ -16,10 +16,11 @@ public class SongViewModel extends AndroidViewModel {
     private LiveData<List<Song>> allSongs;
 
 
-    public SongViewModel(@NonNull Application application) throws InterruptedException {
+    public SongViewModel(@NonNull Application application) {
         super(application);
         repository = new SongRepository(application);
         allSongs = repository.getAllSongs();
+
         Log.d("cs50", "SongViewModel allSongs = " + allSongs.getValue());
     }
 
@@ -32,7 +33,7 @@ public class SongViewModel extends AndroidViewModel {
     public void delete(Song song) {
         repository.delete(song);
     }
-    public void deleteAllNotes() {
+    public void deleteAllSongs() {
         repository.deleteAllSongs();
     }
     public LiveData<List<Song>> getAllSongs() {

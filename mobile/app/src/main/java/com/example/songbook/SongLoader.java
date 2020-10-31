@@ -31,11 +31,6 @@ public class SongLoader {
     public List<Song> songs = new ArrayList<>();
     private RequestQueue requestQueue;
 
-    public List<Song> getSongs () {
-
-         Log.d("cs50", "size of list " + songs.size());
-                return songs;
-    }
 
     public synchronized void loadSong() {
 
@@ -57,6 +52,7 @@ public class SongLoader {
 
 
                     }
+                    //передаем статической переменной репозитория список песен
                     SongRepository.songsFromServer = songs;
                     Log.d("cs50", " Songrepository.songsfromserver = " + SongRepository.songsFromServer.size());
 

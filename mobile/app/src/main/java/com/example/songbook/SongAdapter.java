@@ -52,7 +52,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
             if (constraint == null || constraint.length() == 0) {
                 filteredSong.addAll(songs);
-                Log.d("cs50", "songs size is " + filteredSong.size());
+                //Log.d("cs50", "songs size is " + filteredSong.size());
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
                 for (Song item : songs) {
@@ -91,10 +91,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                 public void onClick(View v) {
                     Song current = (Song) containerView.getTag();
                     Intent intent = new Intent(v.getContext(), SongActivity.class);
-                    intent.putExtra("id", current.getId());
-                    intent.putExtra("title", current.getTitle());
-                    intent.putExtra("text", current.getText());
-                    intent.putExtra("description", current.getDescription());
+                    intent.putExtra(SongActivity.EXTRA_ID, current.getId());
+                    intent.putExtra(SongActivity.EXTRA_TITLE, current.getTitle());
+                    intent.putExtra(SongActivity.EXTRA_TEXT, current.getText());
+                    intent.putExtra(SongActivity.EXTRA_DESCRIPTION, current.getDescription());
 
 
                     //мой добавленный Toast
@@ -119,7 +119,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     @Override
     public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_row, parent, false);
-        Log.d("cs50", "SongVievHolder has been inflated");
+        //Log.d("cs50", "SongVievHolder has been inflated");
         return new SongViewHolder(itemView);
     }
 
@@ -145,22 +145,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         Log.d("cs50", "reload = " + songs.size());
         notifyDataSetChanged();
     }
-    //this metod compare dates of songs with equal id and update the latest version of it
-//    public void update(Song songDb, Song songs){
-//        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss");
-//        try {
-//            Date dateSongDb = formatter.parse(songDb.getUpdated_at());
-//            Date dateSong = formatter.parse(songs.getUpdated_at());
-//            if (dateSongDb.before(dateSong)){
-//                MainActivity.songDatabase.songDao().update(songs);
-//
-//            }
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
-//    }
-
 
 }
 
