@@ -18,9 +18,9 @@ public interface SongDao {
     LiveData<List<Song>> getAllSongs();
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    int update(Song song);
+    void update(Song songs);
 
-    @Delete
+     @Delete
     void delete(Song song);
 
     @Query("DELETE FROM songs")

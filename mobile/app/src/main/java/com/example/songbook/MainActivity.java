@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
     private RecyclerView recyclerView;
     private SongAdapter adapter;
     private SongViewModel songViewModel;
+
 
 
 
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager( this));

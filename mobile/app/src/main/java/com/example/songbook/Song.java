@@ -13,6 +13,7 @@ public class Song {
     private String description;
     private String created_at;
     private String updated_at;
+    private int is_liked = -1;
     //private  int lang_id;
 
 
@@ -48,6 +49,13 @@ public class Song {
     public String getCreated_at() {return created_at;}
 
     public String getUpdated_at() {return updated_at;}
+
+    public int getIs_liked() {
+        return is_liked;
+    }
+    public void setIs_liked(int is_liked) {
+        this.is_liked = is_liked;
+    }
 
     //public int getLang_id() {return lang_id;}
 

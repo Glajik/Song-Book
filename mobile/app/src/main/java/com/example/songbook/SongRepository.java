@@ -32,7 +32,7 @@ public class SongRepository {
         new InsertSongAsyncTask(songDao).execute(songs);
     }
     public void update(Song song) {
-        new UpdateSongAsyncTask(songDao).execute(song);
+        new UpdateAsyncTask(songDao).execute(song);
     }
     public void delete(Song song) {
         new DeleteSongAsyncTask(songDao).execute(song);
@@ -91,9 +91,9 @@ public class SongRepository {
             return null;
         }
     }
-    private static class UpdateSongAsyncTask extends AsyncTask<Song, Void, Void> {
+    private static class UpdateAsyncTask extends AsyncTask<Song, Void, Void> {
         private SongDao songDao;
-        private UpdateSongAsyncTask(SongDao songDao) {
+        private UpdateAsyncTask(SongDao songDao) {
             this.songDao = songDao;
         }
         @Override

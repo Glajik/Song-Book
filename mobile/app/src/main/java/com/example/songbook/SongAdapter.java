@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
@@ -30,13 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> implements Filterable {
-//
+
     private List<Song> songs = new ArrayList<>();
     private List<Song> filtered = new ArrayList<>();
-
-//    public SongAdapter(){
-//
-//    }
 
 
     @Override
@@ -80,13 +77,15 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     public class SongViewHolder extends RecyclerView.ViewHolder {
         public LinearLayout containerView;
         public TextView textView;
+        public Button likedSong;
 
         SongViewHolder(View itemView) {
             super(itemView);
             containerView = itemView.findViewById(R.id.song_row);
             textView = itemView.findViewById(R.id.song_row_text_view);
+            likedSong = itemView.findViewById(R.id.liked_button);
 
-            containerView.setOnClickListener(new View.OnClickListener() {
+            textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Song current = (Song) containerView.getTag();
@@ -95,22 +94,27 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                     intent.putExtra(SongActivity.EXTRA_TITLE, current.getTitle());
                     intent.putExtra(SongActivity.EXTRA_TEXT, current.getText());
                     intent.putExtra(SongActivity.EXTRA_DESCRIPTION, current.getDescription());
-
-
                     //мой добавленный Toast
                     String message = "Good choice";
                     Toast.makeText(v.getContext(), message, Toast.LENGTH_SHORT).show();
-
-
                     v.getContext().startActivity(intent);
+                }
+            });
+
+            likedSong.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Song current = (Song) containerView.getTag();
+                    int id = current.getId();
+
+
+                    likedSong.setBackgroundResource(R.drawable.ic_baseline_thumb_up_24);
+
 
 
                 }
             });
-
-
         }
-
     }
 
 
@@ -119,7 +123,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     @Override
     public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_row, parent, false);
-        //Log.d("cs50", "SongVievHolder has been inflated");
         return new SongViewHolder(itemView);
     }
 
