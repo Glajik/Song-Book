@@ -34,6 +34,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     private List<Song> songs = new ArrayList<>();
     private List<Song> filtered = new ArrayList<>();
+    //SongFavorite songFavorite;
+    private OnItemClickListener listener;
+
 
 
     @Override
@@ -77,13 +80,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     public class SongViewHolder extends RecyclerView.ViewHolder {
         public LinearLayout containerView;
         public TextView textView;
-        public Button likedSong;
+        public Button favoriteSong;
 
-        SongViewHolder(View itemView) {
+        SongViewHolder(final View itemView) {
             super(itemView);
             containerView = itemView.findViewById(R.id.song_row);
             textView = itemView.findViewById(R.id.song_row_text_view);
-            likedSong = itemView.findViewById(R.id.liked_button);
+            favoriteSong = itemView.findViewById(R.id.liked_button);
 
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -101,20 +104,25 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                 }
             });
 
-            likedSong.setOnClickListener(new View.OnClickListener() {
+            favoriteSong.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Song current = (Song) containerView.getTag();
-                    int id = current.getId();
-
-
-                    likedSong.setBackgroundResource(R.drawable.ic_baseline_thumb_up_24);
-
-
+                    int position = getAdapterPosition();
+                    if(listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(songs.get(position));
+                        favoriteSong.setBackgroundResource(R.drawable.ic_baseline_thumb_up_24);
+                    }
 
                 }
             });
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick (Song song);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener = listener;
     }
 
 

@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        setTitle("Все песни");
 
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager( this));
@@ -71,6 +71,14 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
             @Override
             public void onChanged(List<Song> songs) {
                 adapter.reload(songs);
+            }
+        });
+
+        //устанавливаем лисенер для списка favorite песен
+        adapter.setOnItemClickListener(new SongAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Song song) {
+                songViewModel.insertFavoriteSong(song);
             }
         });
     }

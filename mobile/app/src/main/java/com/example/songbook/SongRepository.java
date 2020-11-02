@@ -13,6 +13,7 @@ import java.util.List;
 
 public class SongRepository {
     private SongDao songDao;
+    private SongFavoriteDao songFavoriteDao;
     private LiveData<List<Song>> allSongs;
     public static List<Song> songsFromServer = new ArrayList<>();
     SongLoader songLoader;
@@ -20,6 +21,7 @@ public class SongRepository {
     public SongRepository(Application application)  {
         SongDatabase database = SongDatabase.getInstance(application);
         songDao = database.songDao();
+        songFavoriteDao = database.songFavoriteDao();
 
 
         loadSongsFromWeb(application);
@@ -43,6 +45,11 @@ public class SongRepository {
     public LiveData<List<Song>> getAllSongs() {
         return allSongs;
     }
+    public void insertFavoriteSong(Song song) {
+        new InsertFavoriteSongSongAsyncTask(songFavoriteDao).execute(song);
+
+    }
+
 
     private void loadSongsFromWeb(Application application) {
         songLoader = new SongLoader(application);
@@ -74,8 +81,6 @@ public class SongRepository {
         });
         thread.start();
     }
-
-
 
 
 
@@ -121,6 +126,18 @@ public class SongRepository {
         @Override
         protected Void doInBackground(Void... voids) {
             songDao.deleteAllSongs();
+            return null;
+        }
+    }
+    private static class InsertFavoriteSongSongAsyncTask extends AsyncTask<Song, Void, Void> {
+        private SongFavoriteDao songFavoriteDao;
+        private InsertFavoriteSongSongAsyncTask(SongFavoriteDao songFavoriteDao) {
+            this.songFavoriteDao = songFavoriteDao;
+        }
+        @Override
+        protected Void doInBackground(Song... songs) {
+            songFavoriteDao.insert(songs[0]);
+            Log.d("cs50", "inserted into favorite songs" + songs[0].getTitle());
             return null;
         }
     }

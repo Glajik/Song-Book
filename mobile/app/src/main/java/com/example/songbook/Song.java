@@ -13,22 +13,21 @@ public class Song {
     private String description;
     private String created_at;
     private String updated_at;
-    private int is_liked = -1;
-    //private  int lang_id;
+    private  String  language;
 
 
 
 
 
     Song(int id, String title, String text, String description, String created_at,
-         String updated_at){
+         String updated_at, String language){
         this.id = id;
         this.title = title;
         this.text = text;
         this.description = description;
         this.created_at = created_at;
         this.updated_at = updated_at;
-        //this.lang_id = lang_id;
+        this.language = language;
 
     }
 
@@ -50,14 +49,12 @@ public class Song {
 
     public String getUpdated_at() {return updated_at;}
 
-    public int getIs_liked() {
-        return is_liked;
-    }
-    public void setIs_liked(int is_liked) {
-        this.is_liked = is_liked;
+    public String getLanguage() {
+        return language;
     }
 
-    //public int getLang_id() {return lang_id;}
+
+
 
 }
 

@@ -39,4 +39,8 @@ public class SongViewModel extends AndroidViewModel {
     public LiveData<List<Song>> getAllSongs() {
         return allSongs;
     }
+    public void insertFavoriteSong(Song song) {
+        repository.insertFavoriteSong(song);
+
+    }
 }
