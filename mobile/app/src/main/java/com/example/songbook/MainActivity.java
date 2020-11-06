@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
         adapter.setOnItemClickListener(new SongAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Song song) {
-                songViewModel.updateFavoriteList(song);
+                //songViewModel.updateFavoriteList(song);
+                // do something
             }
         });
     }

@@ -1,6 +1,7 @@
 package com.example.songbook;
 
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
@@ -14,10 +15,6 @@ public class Song {
     private String created_at;
     private String updated_at;
     private  String  language;
-
-
-
-
 
     Song(int id, String title, String text, String description, String created_at,
          String updated_at, String language){
@@ -53,6 +50,33 @@ public class Song {
         return language;
     }
 
+}
+
+@Entity(tableName = "favoriteStatuses", foreignKeys = @ForeignKey(entity = Song.class, parentColumns = "id", childColumns = "songId"))
+class FavoriteStatus{
+    @PrimaryKey()
+    int songId;
+    int favoriteStatus;
+
+    FavoriteStatus(int songId, int favoriteStatus){
+        this.songId = songId;
+        this.favoriteStatus = favoriteStatus;
+    }
+    public int getSongId() {
+        return songId;
+    }
+
+    public int getFavoriteStatus() {
+        return favoriteStatus;
+    }
+
+    public void setSongId(int songId) {
+        this.songId = songId;
+    }
+
+    public void setFavoriteStatus(int favoriteStatus) {
+        this.favoriteStatus = favoriteStatus;
+    }
 
 
 

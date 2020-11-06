@@ -41,7 +41,7 @@ public class SongLoader {
                 try {
                     JSONArray results = response.getJSONArray("songs");
 
-                   //Log.d("cs50", "response is: " + response.toString());
+                   Log.d("cs50", "response is: " + response.toString());
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject result = results.getJSONObject(i);
                         Song songTemp = new Song(result.getInt("id"), result.getString("title"),
