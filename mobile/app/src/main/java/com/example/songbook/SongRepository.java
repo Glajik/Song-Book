@@ -1,12 +1,10 @@
 package com.example.songbook;
 
 import android.app.Application;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +26,7 @@ public class SongRepository {
 
         loadSongsFromWeb(application);
         allSongs = songDao.getAllSongs();
-        allFavoriteSongs = songFavoriteDao.getAllSongs();
+        allFavoriteSongs = songFavoriteDao.getAllFavoriteSongs();
 
     }
 
@@ -56,7 +54,6 @@ public class SongRepository {
     // команды для SongFavorite
     public void insertFavoriteSong(Song song) {
         new InsertFavoriteSongSongAsyncTask(songFavoriteDao).execute(song);
-
     }
 
     public void deleteFavoriteSong(Song song) {
@@ -167,7 +164,7 @@ public class SongRepository {
 
         @Override
         protected Void doInBackground(Song... songs) {
-            songFavoriteDao.insert(songs[0]);
+            songFavoriteDao.insertFavoriteSong(songs[0]);
             //Log.d("cs50", "inserted into favorite songs" + songs[0].getTitle());
             return null;
         }
@@ -183,7 +180,7 @@ public class SongRepository {
 
         @Override
         protected Void doInBackground(Song... songs) {
-            songFavoriteDao.delete(songs[0]);
+            songFavoriteDao.deleteFavoriteSong(songs[0]);
             return null;
         }
 

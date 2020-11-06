@@ -13,12 +13,12 @@ import java.util.List;
 @Dao
 public interface SongFavoriteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Song songs);
+    void insertFavoriteSong(Song songs);
 
     @Query("SELECT*FROM songsFavorite ORDER BY title")
-    LiveData<List<Song>> getAllSongs();
+    LiveData<List<Song>> getAllFavoriteSongs();
 
     @Delete
-    void delete(Song song);
+    void deleteFavoriteSong(Song song);
 
     }
