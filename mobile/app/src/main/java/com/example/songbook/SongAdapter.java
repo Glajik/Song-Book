@@ -109,7 +109,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if(listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(songs.get(position));
+                        int songId = songs.get(position).getId();
+                        listener.onItemClick(songId);
+
                         favoriteSong.setBackgroundResource(R.drawable.ic_baseline_thumb_up_24);
                     }
 
@@ -119,7 +121,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     }
 
     public interface OnItemClickListener {
-        void onItemClick (Song song);
+        void onItemClick (int songId);
     }
     public void setOnItemClickListener(OnItemClickListener listener){
         this.listener = listener;

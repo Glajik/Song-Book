@@ -15,6 +15,7 @@ public class SongViewModel extends AndroidViewModel {
 
     public SongRepository repository;
     private LiveData<List<Song>> allSongs;
+    private List<FavoriteStatus> allFavoriteStatuses;
 
 
 
@@ -22,6 +23,8 @@ public class SongViewModel extends AndroidViewModel {
         super(application);
         repository = new SongRepository(application);
         allSongs = repository.getAllSongs();
+        allFavoriteStatuses = repository.getAllFavoriteStatuses();
+
 
         Log.d("cs50", "SongViewModel allSongs = " + allSongs.getValue());
     }
@@ -52,15 +55,16 @@ public class SongViewModel extends AndroidViewModel {
 //        repository.deleteFavoriteSong(song);
 //    }
 //
-//    public void  updateFavoriteList(Song song) {
-//// не  работает...  почему то массив пустой.   Синхронизация?
-//            if( allFavoriteSongs.getValue().contains(song) ){
-//                deleteFavoriteSong(song);
-//                Log.d("cs50", "song has been disliked");
-//            } else {
-//                insertFavoriteSong(song);
-//                Log.d("cs50", "song has been  added to liked");
-//            }
-//        //}
-//    }
+    public void  updateFavoriteStatus(int songId) {
+             allFavoriteStatuses
+
+            if( allFavoriteSongs.getValue().contains(song) ){
+                deleteFavoriteSong(song);
+                Log.d("cs50", "song has been disliked");
+            } else {
+                insertFavoriteSong(song);
+                Log.d("cs50", "song has been  added to liked");
+            }
+        //}
+    }
 }

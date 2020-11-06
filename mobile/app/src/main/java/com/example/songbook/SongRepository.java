@@ -13,6 +13,7 @@ public class SongRepository {
     private SongDao songDao;
     private FavoriteStatusDao favoriteStatusDao;
     private LiveData<List<Song>> allSongs;
+    private List<FavoriteStatus> allFavoriteStatuses;
 
 
     public static List<Song> songsFromServer = new ArrayList<>();
@@ -26,6 +27,7 @@ public class SongRepository {
 
         loadSongsFromWeb(application);
         allSongs = songDao.getAllSongs();
+        allFavoriteStatuses = favoriteStatusDao.getAllFavoriteStatuses();
 
 
 
@@ -54,18 +56,20 @@ public class SongRepository {
 
 
 
+
+
     // команды для SongFavorite
-//    public void insertFavoriteSong(Song song) {
-//        new InsertFavoriteSongSongAsyncTask(songFavoriteDao).execute(song);
-//    }
-//
+    public void insertFavoriteSong(int songId, int favoriteStatus) {
+        new InsertFavoriteSongSongAsyncTask(favoriteStatusDao).execute(songId, favoriteStatus);
+    }
+
 //    public void deleteFavoriteSong(Song song) {
 //        new deleteFavoriteSongAsyncTask(songFavoriteDao).execute(song);
 //    }
 //
-//    public LiveData<List<Song>> getAllFavoriteSongs() {
-//        return allFavoriteSongs;
-//    }
+    public List<FavoriteStatus> getAllFavoriteStatuses() {
+        return allFavoriteStatuses;
+    }
 
 
     // закгрузка песен с веб сервера
@@ -92,6 +96,8 @@ public class SongRepository {
                     Log.d("cs50", "allSongs: " + allSongs.getValue().toString() +
                            "      songsfromserver: " + songsFromServer.toString());
                     insert(songsFromServer);
+
+
                 }
 
                 // new code
@@ -161,21 +167,21 @@ public class SongRepository {
         }
     }
 
-//    //вставить  песню в таблицу избранных песен
-//    private static class InsertFavoriteSongSongAsyncTask extends AsyncTask<Song, Void, Void> {
-//        private SongFavoriteDao songFavoriteDao;
-//
-//        private InsertFavoriteSongSongAsyncTask(SongFavoriteDao songFavoriteDao) {
-//            this.songFavoriteDao = songFavoriteDao;
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Song... songs) {
-//            songFavoriteDao.insertFavoriteSong(songs[0]);
-//            //Log.d("cs50", "inserted into favorite songs" + songs[0].getTitle());
-//            return null;
-//        }
-//    }
+    //вставить  песню в таблицу избранных песен
+    private static class InsertFavoriteSongSongAsyncTask extends AsyncTask<Integer, Void, Void> {
+        private FavoriteStatusDao favoriteStatusDao;
+
+        private InsertFavoriteSongSongAsyncTask(FavoriteStatusDao favoriteStatusDao) {
+            this.favoriteStatusDao = favoriteStatusDao;
+        }
+
+        @Override
+        protected Void doInBackground(Integer... songs) {
+            favoriteStatusDao.insertFavoriteSong(songs[0], songs[1] );
+            Log.d("cs50", "inserted into favorite songs id  " + songs[0]);
+            return null;
+        }
+    }
 //
 //    // удалить песню из избранных песен
 //    private static class deleteFavoriteSongAsyncTask extends AsyncTask<Song, Void, Void> {
