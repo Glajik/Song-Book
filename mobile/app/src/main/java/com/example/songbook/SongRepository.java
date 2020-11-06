@@ -63,7 +63,7 @@ public class SongRepository {
         new InsertFavoriteSongSongAsyncTask(favoriteStatusDao).execute(songId, favoriteStatus);
     }
 
-//    public void deleteFavoriteSong(Song song) {
+//    public void deleteFavoriteSong(int Id) {
 //        new deleteFavoriteSongAsyncTask(songFavoriteDao).execute(song);
 //    }
 //
