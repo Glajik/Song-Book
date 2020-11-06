@@ -13,16 +13,16 @@ import java.util.List;
 @Dao
 public interface FavoriteStatusDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertFavoriteSong(int songId, int favoriteStatus);
+    void insertFavoriteSong(FavoriteStatus favoriteStatus);
 
-    @Query("SELECT*FROM favoriteStatuses")
+    @Query("SELECT * FROM favoriteStatuses")
     List<FavoriteStatus> getAllFavoriteStatuses();
 
 
     @Delete
-    void deleteFavoriteSong(int songId);
+    void deleteFavoriteSong(FavoriteStatus favoriteStatus);
 
     @Update
-    void updateFavoriteStatus (int songId, int favoriteStatus);
+    void updateFavoriteStatus (FavoriteStatus favoriteStatus);
 
 }
