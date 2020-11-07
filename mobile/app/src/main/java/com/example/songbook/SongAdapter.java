@@ -1,6 +1,5 @@
 package com.example.songbook;
 
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,25 +15,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> implements Filterable {
 
-    private List<Song> songs = new ArrayList<>();
-    private List<Song> filtered = new ArrayList<>();
-    //SongFavorite songFavorite;
+    private List<SongFavoriteStatus> songFavoriteStatuses = new ArrayList<>();
+    private List<SongFavoriteStatus> filtered = new ArrayList<>();
     private OnItemClickListener listener;
 
 
@@ -48,14 +35,14 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     private class SongFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            List<Song> filteredSong = new ArrayList<>();
+            List<SongFavoriteStatus> filteredSong = new ArrayList<>();
 
             if (constraint == null || constraint.length() == 0) {
-                filteredSong.addAll(songs);
+                filteredSong.addAll(songFavoriteStatuses);
                 //Log.d("cs50", "songs size is " + filteredSong.size());
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
-                for (Song item : songs) {
+                for (SongFavoriteStatus item : songFavoriteStatuses) {
                     if (item.getText().toLowerCase().contains(filterPattern)) {
                         filteredSong.add(item);
                     }
@@ -71,9 +58,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
 
-            filtered = (List<Song>) results.values;
+            filtered = (List<SongFavoriteStatus>) results.values;
 
-            notifyDataSetChanged();                   // и заменить в OnBind и getItemCount
+            notifyDataSetChanged();
         }
     }
 
@@ -91,7 +78,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Song current = (Song) containerView.getTag();
+                    SongFavoriteStatus current = (SongFavoriteStatus) containerView.getTag();
                     Intent intent = new Intent(v.getContext(), SongActivity.class);
                     intent.putExtra(SongActivity.EXTRA_ID, current.getId());
                     intent.putExtra(SongActivity.EXTRA_TITLE, current.getTitle());
@@ -109,7 +96,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if(listener != null && position != RecyclerView.NO_POSITION) {
-                        int songId = songs.get(position).getId();
+                        int songId = songFavoriteStatuses.get(position).getId();
                         listener.onItemClick(songId);
 
                         favoriteSong.setBackgroundResource(R.drawable.ic_baseline_thumb_up_24);
@@ -138,7 +125,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
-        Song current = filtered.get(position);
+        SongFavoriteStatus current = filtered.get(position);
         holder.textView.setText(current.getTitle());
         Log.d("cs50", "filtered size is " + filtered.size());
         holder.containerView.setTag(current);
@@ -152,10 +139,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     }
 
-    public void reload(List<Song> songs) {
-        this.songs = songs;
+    public void reload(List<SongFavoriteStatus> songFavoriteStatuses) {
+        this.songFavoriteStatuses = songFavoriteStatuses;
         getFilter().filter("");
-        Log.d("cs50", "reload = " + songs.size());
+        Log.d("cs50", "reload = " + this.songFavoriteStatuses.size());
         notifyDataSetChanged();
     }
 

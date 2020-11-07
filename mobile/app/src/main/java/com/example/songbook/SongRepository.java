@@ -12,7 +12,9 @@ import java.util.List;
 public class SongRepository {
     private SongDao songDao;
     private FavoriteStatusDao favoriteStatusDao;
+    private SongFavoriteStatusDao songFavoriteStatusDao;
     private LiveData<List<Song>> allSongs;
+    private LiveData<List<SongFavoriteStatus>> allSongsFavoriteStatus;
     public List<FavoriteStatus> allFavoriteStatuses = new ArrayList<>();
     public static List<Song> songsFromServer = new ArrayList<>();
     SongLoader songLoader;
@@ -21,15 +23,11 @@ public class SongRepository {
         SongDatabase database = SongDatabase.getInstance(application);
         songDao = database.songDao();
         favoriteStatusDao = database.favoriteStatusDao();
-
+        songFavoriteStatusDao = database.songFavoriteStatusDao();
 
         loadSongsFromWeb(application);
         allSongs = songDao.getAllSongs();
-//        allFavoriteStatuses = favoriteStatusDao.getAllFavoriteStatuses();
-//        Log.d("cs50", "allFavoriteStatus " + allFavoriteStatuses.get(0).songId);
-
-
-
+        allSongsFavoriteStatus = songFavoriteStatusDao.getAllSongsFavoriteStatus();
     }
 
 
@@ -53,9 +51,13 @@ public class SongRepository {
         return allSongs;
     }
 
+    public LiveData<List<SongFavoriteStatus>> getAllSongsFavoriteStatus() {
+        return allSongsFavoriteStatus;
+    }
 
-    public void insertFavoriteSong(FavoriteStatus favoriteStatus) {
-        new InsertFavoriteSongSongAsyncTask(favoriteStatusDao).execute(favoriteStatus);
+
+    public void insertSongFavoriteStatus() {
+        new insertSongFavoriteStatusAsyncTask(songFavoriteStatusDao).execute();
     }
 
     public void deleteFavoriteSong(FavoriteStatus favoriteStatus) {
@@ -78,32 +80,36 @@ public class SongRepository {
                 while (songsFromServer.size() == 0 && i < 10000) {
                     try {
                         wait(1);
-                        Log.d("cs50", "waiting for data " + i);
+                        //Log.d("cs50", "waiting for data " + i);
                         i++;
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-
                 for (int j = 0; j < songsFromServer.size(); j++) {
-                    FavoriteStatus favoriteStatus = new FavoriteStatus(songsFromServer.get(j).getId(), -1);
-                    allFavoriteStatuses.add(favoriteStatus);
-                    Log.d("cs50", "allFavoriteStatus: " + favoriteStatus.songId + " value " + favoriteStatus.favoriteStatus);
+                    favoriteStatusDao.insertFavoriteSong(songsFromServer.get(j).getId());
+                    Log.d("cs50", "allFavoriteStatus: " + songsFromServer.get(j).getId());
+
                 }
+                insertSongFavoriteStatus();
 //                Проверяем,  если размер массива в локальной базе данных не равен размеру массива,  полученного с сервера,
 //                то всталяем с заменой массив с сервера в локальную базу данных
-                if (allSongs.getValue().size() != songsFromServer.size()) {
+                if (allSongsFavoriteStatus.getValue().size() != songsFromServer.size()) {
 //                    Log.d("cs50", "allSongs: " + allSongs.getValue().toString() +
 //                           "      songsfromserver: " + songsFromServer.toString());
                     deleteAllSongs();
                     insert(songsFromServer);
+
+
+
                 }
                 Thread.currentThread().interrupt();
             }
         });
         thread.start();
     }
+
 
     private static class InsertSongAsyncTask extends AsyncTask<List<Song>, Void, Void> {
         private SongDao songDao;
@@ -167,17 +173,17 @@ public class SongRepository {
         }
     }
 
-    private static class InsertFavoriteSongSongAsyncTask extends AsyncTask<FavoriteStatus, Void, Void> {
-    private FavoriteStatusDao favoriteStatusDao;
+    private static class insertSongFavoriteStatusAsyncTask extends AsyncTask<Void, Void, Void> {
+    private SongFavoriteStatusDao songFavoriteStatusDao;
 
-    private InsertFavoriteSongSongAsyncTask(FavoriteStatusDao favoriteStatusDao) {
-        this.favoriteStatusDao = favoriteStatusDao;
+    private insertSongFavoriteStatusAsyncTask (SongFavoriteStatusDao songFavoriteStatusDao) {
+        this.songFavoriteStatusDao = songFavoriteStatusDao;
     }
 
     @Override
-    protected Void doInBackground(FavoriteStatus... songs) {
-        favoriteStatusDao.insertFavoriteSong(songs[0]);
-        Log.d("cs50", "inserted into favorite songs id  " + songs[0]);
+    protected Void doInBackground(Void... voids) {
+        songFavoriteStatusDao.fillSongFavoriteStatus();
+        Log.d("cs50", "inserted into favorite songs id  " );
         return null;
     }
 }

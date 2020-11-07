@@ -12,8 +12,9 @@ import java.util.List;
 
 @Dao
 public interface FavoriteStatusDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertFavoriteSong(FavoriteStatus favoriteStatus);
+    //@Query("INSERT INTO  favoriteStatuses  (id, favoriteStatus)  VALUES (:id, 0) WHERE ")
+    @Query("UPDATE favoriteStatuses  SET id =:id ")
+    void insertFavoriteSong(int id);
 
     @Query("SELECT * FROM favoriteStatuses")
     List<FavoriteStatus> getAllFavoriteStatuses();
@@ -24,5 +25,7 @@ public interface FavoriteStatusDao {
 
     @Update
     void updateFavoriteStatus (FavoriteStatus favoriteStatus);
+
+
 
 }

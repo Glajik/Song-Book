@@ -15,15 +15,20 @@ public class SongViewModel extends AndroidViewModel {
 
     public SongRepository repository;
     private LiveData<List<Song>> allSongs;
-   List<FavoriteStatus>  allFavoriteStatuses;
+    private LiveData<List<SongFavoriteStatus>> allSongsFavoriteStatus;
+
+
 
 
     public SongViewModel(@NonNull Application application) {
         super(application);
         repository = new SongRepository(application);
         allSongs = repository.getAllSongs();
-        allFavoriteStatuses = repository.getAllFavoriteStatuses();
-        Log.d("cs50", "SongViewModel allSongs = " + allSongs.getValue());
+        allSongsFavoriteStatus = repository.getAllSongsFavoriteStatus();
+
+
+
+//        Log.d("cs50", "SongViewModel allSongs = " + allSongs.getValue());
     }
 
     public void insert(List<Song> songs) {
@@ -41,26 +46,11 @@ public class SongViewModel extends AndroidViewModel {
     public LiveData<List<Song>> getAllSongs() {
         return allSongs;
     }
-
-    public List<FavoriteStatus> getAllFavoriteStatuses() {
-        return allFavoriteStatuses;
+    public LiveData<List<SongFavoriteStatus>> getAllSongsFavoriteStatus() {
+        return allSongsFavoriteStatus;
     }
-    public void insertFavoriteSong(FavoriteStatus favoriteStatus) {
-        repository.insertFavoriteSong(favoriteStatus);
-    }
-//    public void deleteFavoriteSong(int songId) {
-//        repository.deleteFavoriteSong(songId);
-//    }
 
-//    public void  updateFavoriteList(int songId) {
-//
-//            if( ){
-//
-//                Log.d("cs50", "song has been disliked");
-//            } else {
-//                ;
-//                Log.d("cs50", "song has been  added to liked");
-//            }
-        //}
-//    }
+
+
+
 }

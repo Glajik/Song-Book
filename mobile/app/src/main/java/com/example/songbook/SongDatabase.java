@@ -6,10 +6,11 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Song.class, FavoriteStatus.class}, version = 9, exportSchema = true)
+@Database(entities = {Song.class, FavoriteStatus.class, SongFavoriteStatus.class}, version = 13, exportSchema = true)
 public abstract class SongDatabase extends RoomDatabase {
     public abstract SongDao songDao();
     public abstract FavoriteStatusDao favoriteStatusDao();
+    public abstract SongFavoriteStatusDao songFavoriteStatusDao();
 
     private static SongDatabase instance;
 

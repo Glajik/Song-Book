@@ -67,10 +67,11 @@ public class MainActivity extends AppCompatActivity //implements SearchView.OnQu
                 ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication()))
                 .get(SongViewModel.class);
 
-        songViewModel.getAllSongs().observe(this, new Observer<List<Song>>() {
+        songViewModel.getAllSongsFavoriteStatus().observe(this, new Observer<List<SongFavoriteStatus>>() {
             @Override
-            public void onChanged(List<Song> songs) {
-                adapter.reload(songs);
+            public void onChanged(List<SongFavoriteStatus> songFavoriteStatuses) {
+                adapter.reload(songFavoriteStatuses);
+                Log.d("cs50", "songFavoriteStatuses = " + songFavoriteStatuses.size());
             }
         });
 
