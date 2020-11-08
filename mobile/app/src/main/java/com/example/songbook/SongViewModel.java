@@ -23,10 +23,6 @@ public class SongViewModel extends AndroidViewModel {
         Log.d("cs50", "SongViewModel allSongs = " + allSongs.getValue());
     }
 
-    public void insert(Song song) {
-        repository.insert(song);
-    }
-
     public void insertSongWithStatus(Song song) {
         repository.insertSongWithStatus(song);
     }

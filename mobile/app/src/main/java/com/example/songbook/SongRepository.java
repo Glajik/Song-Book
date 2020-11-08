@@ -34,9 +34,6 @@ public class SongRepository {
     public void insertSongWithStatus(Song song) {
         new insertSongWithStatusSongAsyncTask(songDao).execute(song);
     }
-    public void insert(Song song) {
-        new InsertSongAsyncTask(songDao).execute(song);
-    }
     public void update(Song song) {
         new UpdateAsyncTask(songDao).execute(song);
     }
@@ -72,10 +69,14 @@ public class SongRepository {
                     insertAll(songsFromServer);
                 }
                 else{                // then change to !=
-                    if (allSongs.getValue().size() == songsFromServer.size()) {
-                        for (Song song : songsFromServer) {
-                            insert(song);
+                    if (allSongs.getValue().size() != songsFromServer.size()) {
+                        for (int j = 0; j < allSongs.getValue().size(); j++){
+                            int favoriteStatus = allSongs.getValue().get(j).getFavStatus();
+                            songsFromServer.get(j).setFavStatus(favoriteStatus);
                         }
+                        insertAll(songsFromServer);
+
+
                     }else {
                         Log.d("cs50","local and web databases are equal");
                     }
@@ -111,23 +112,6 @@ public class SongRepository {
 
             long i = songDao.insertSongWithStatus(songs[0]);
             Log.d("cs50",  i + " insertSongWithStatus " + songs[0].getTitle() + " " + songs[0].getFavStatus());
-            return null;
-        }
-    }
-    private static class InsertSongAsyncTask extends AsyncTask<Song, Void, Void> {
-        private SongDao songDao;
-
-        private InsertSongAsyncTask(SongDao songDao) {
-            this.songDao = songDao;
-        }
-
-        @Override
-        protected Void doInBackground(Song... songs) {
-
-            long i = songDao.insert(songs[0].getId(), songs[0].getTitle(), songs[0].getDescription(),
-                    songs[0].getText(), songs[0].getCreated_at(), songs[0].getUpdated_at(),
-                    songs[0].getLanguage());
-            Log.d("cs50",  i + " inserted songs without favStatus" );
             return null;
         }
     }

@@ -35,9 +35,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     private List<Song> songs = new ArrayList<>();
     private List<Song> filtered = new ArrayList<>();
     private OnItemClickListener listener;
-    int positionForFavButton;
-
-
 
     @Override
     public Filter getFilter() {
@@ -105,24 +102,18 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                 }
             });
 
-          //  setColorFavoriteSongButton();
-
-
-            favoriteSong.setOnClickListener(new View.OnClickListener() {
+        favoriteSong.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
 
                     if(listener != null && position != RecyclerView.NO_POSITION) {
                         listener.onItemClick(songs.get(position));
-                        //setColorFavoriteSongButton(songs.get(position));
                     }
-
                 }
             });
         }
         public void setColorFavoriteSongButton(Song current){
-            //Song current = (Song) containerView.getTag();
             int favoriteStatus = current.getFavStatus();
             if( favoriteStatus== 0 ){
                 favoriteSong.setBackgroundResource(R.drawable.ic_shadow_thumb_up_24);
@@ -157,7 +148,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         holder.textView.setText(current.getTitle());
         //Log.d("cs50", "filtered size is " + filtered.size());
         holder.containerView.setTag(current);
-        positionForFavButton = position;
         holder.setColorFavoriteSongButton(current);
 
 
