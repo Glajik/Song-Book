@@ -12,7 +12,12 @@ import java.util.List;
 @Dao
 public interface SongDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(List<Song> songs);
+    void insertAll(List<Song> songs);
+
+    @Query("INSERT OR REPLACE INTO songs (id, title, description, text, created_at, updated_at, language)" +
+            "  VALUES (:id, :title, :description, :text, :created_at, :updated_at, :language) ")
+    long insert(int id, String title, String description, String text, String created_at,
+                String updated_at, String language);
 
     @Query("SELECT*FROM songs ORDER BY title")
     LiveData<List<Song>> getAllSongs();
@@ -25,4 +30,7 @@ public interface SongDao {
 
     @Query("DELETE FROM songs")
     void deleteAllSongs();
+
+//    @Query("SELECT favStatus FROM songs WHERE id = :id")
+//    void getFavStatus(int id);
 }

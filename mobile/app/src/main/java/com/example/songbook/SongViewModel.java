@@ -15,23 +15,16 @@ public class SongViewModel extends AndroidViewModel {
 
     public SongRepository repository;
     private LiveData<List<Song>> allSongs;
-    private LiveData<List<Song>> allFavoriteSongs;
-
 
     public SongViewModel(@NonNull Application application) {
         super(application);
         repository = new SongRepository(application);
         allSongs = repository.getAllSongs();
-        // почему добавив песню в FavoriteSongs - она появляется в таблице Songs?
-//        Song song1 = new Song(0, "", "","","","","");
-//        repository.insertFavoriteSong(song1);
-        allFavoriteSongs = repository.getAllFavoriteSongs();
-
         Log.d("cs50", "SongViewModel allSongs = " + allSongs.getValue());
     }
 
-    public void insert(List<Song> songs) {
-        repository.insert(songs);
+    public void insert(Song song) {
+        repository.insert(song);
     }
     public void update(Song song) {
         repository.update(song);
@@ -46,25 +39,4 @@ public class SongViewModel extends AndroidViewModel {
         return allSongs;
     }
 
-    public LiveData<List<Song>> getAllFavoriteSongs() {
-        return allFavoriteSongs;
-    }
-    public void insertFavoriteSong(Song song) {
-        repository.insertFavoriteSong(song);
-    }
-    public void deleteFavoriteSong(Song song) {
-        repository.deleteFavoriteSong(song);
-    }
-
-    public void  updateFavoriteList(Song song) {
-// не  работает...  почему то массив пустой.   Синхронизация?
-            if( allFavoriteSongs.getValue().contains(song) ){
-                deleteFavoriteSong(song);
-                Log.d("cs50", "song has been disliked");
-            } else {
-                insertFavoriteSong(song);
-                Log.d("cs50", "song has been  added to liked");
-            }
-        //}
-    }
-}
+ }

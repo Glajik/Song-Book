@@ -34,8 +34,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     private List<Song> songs = new ArrayList<>();
     private List<Song> filtered = new ArrayList<>();
-    //SongFavorite songFavorite;
     private OnItemClickListener listener;
+    int positionForFavButton;
 
 
 
@@ -88,6 +88,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             textView = itemView.findViewById(R.id.song_row_text_view);
             favoriteSong = itemView.findViewById(R.id.liked_button);
 
+
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -104,6 +105,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                 }
             });
 
+            setColorFavoriteSongButton(positionForFavButton);
+
             favoriteSong.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -115,6 +118,16 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
                 }
             });
+        }
+        private void setColorFavoriteSongButton(int position){
+            int favoriteStatus = songs.get(position).getFavStatus();
+            if( favoriteStatus== 0 && position != RecyclerView.NO_POSITION){
+                favoriteSong.setBackgroundResource(R.drawable.ic_shadow_thumb_up_24);
+                Log.d("cs50", "Position adapter " + position + "favoriteStatus " + favoriteStatus);
+            }else {
+                favoriteSong.setBackgroundResource(R.drawable.ic_baseline_thumb_up_24);
+
+            }
         }
     }
 
@@ -140,6 +153,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         holder.textView.setText(current.getTitle());
         Log.d("cs50", "filtered size is " + filtered.size());
         holder.containerView.setTag(current);
+        positionForFavButton = position;
+
 
     }
 
