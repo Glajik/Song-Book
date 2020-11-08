@@ -63,7 +63,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             }
 
             FilterResults results = new FilterResults();
-            results.values = filteredSong; // you need to create this variable!
+            results.values = filteredSong;
             results.count = filteredSong.size();
             return results;
         }
@@ -73,7 +73,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
             filtered = (List<Song>) results.values;
 
-            notifyDataSetChanged();                   // и заменить в OnBind и getItemCount
+            notifyDataSetChanged();
         }
     }
 
@@ -105,27 +105,31 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                 }
             });
 
-            setColorFavoriteSongButton(positionForFavButton);
+          //  setColorFavoriteSongButton();
+
 
             favoriteSong.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
+
                     if(listener != null && position != RecyclerView.NO_POSITION) {
                         listener.onItemClick(songs.get(position));
-                        favoriteSong.setBackgroundResource(R.drawable.ic_baseline_thumb_up_24);
+                        //setColorFavoriteSongButton(songs.get(position));
                     }
 
                 }
             });
         }
-        private void setColorFavoriteSongButton(int position){
-            int favoriteStatus = songs.get(position).getFavStatus();
-            if( favoriteStatus== 0 && position != RecyclerView.NO_POSITION){
+        public void setColorFavoriteSongButton(Song current){
+            //Song current = (Song) containerView.getTag();
+            int favoriteStatus = current.getFavStatus();
+            if( favoriteStatus== 0 ){
                 favoriteSong.setBackgroundResource(R.drawable.ic_shadow_thumb_up_24);
-                Log.d("cs50", "Position adapter " + position + "favoriteStatus " + favoriteStatus);
+                Log.d("cs50", " song current " + current.getTitle() + " , favoriteStatus " + favoriteStatus);
             }else {
                 favoriteSong.setBackgroundResource(R.drawable.ic_baseline_thumb_up_24);
+                Log.d("cs50", " song current " + current.getTitle() + " , favoriteStatus " + favoriteStatus);
 
             }
         }
@@ -151,9 +155,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
         Song current = filtered.get(position);
         holder.textView.setText(current.getTitle());
-        Log.d("cs50", "filtered size is " + filtered.size());
+        //Log.d("cs50", "filtered size is " + filtered.size());
         holder.containerView.setTag(current);
         positionForFavButton = position;
+        holder.setColorFavoriteSongButton(current);
 
 
     }
@@ -168,7 +173,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     public void reload(List<Song> songs) {
         this.songs = songs;
         getFilter().filter("");
-        Log.d("cs50", "reload = " + songs.size());
+       // Log.d("cs50", "reload = " + songs.size());
         notifyDataSetChanged();
     }
 

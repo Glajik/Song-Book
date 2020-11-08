@@ -14,6 +14,9 @@ public interface SongDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Song> songs);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long insertSongWithStatus(Song song);
+
     @Query("INSERT OR REPLACE INTO songs (id, title, description, text, created_at, updated_at, language)" +
             "  VALUES (:id, :title, :description, :text, :created_at, :updated_at, :language) ")
     long insert(int id, String title, String description, String text, String created_at,

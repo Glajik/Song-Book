@@ -31,23 +31,21 @@ public class SongRepository {
     public void insertAll(List<Song> songs) {
         new InsertAllSongAsyncTask(songDao).execute(songs);
     }
-
+    public void insertSongWithStatus(Song song) {
+        new insertSongWithStatusSongAsyncTask(songDao).execute(song);
+    }
     public void insert(Song song) {
         new InsertSongAsyncTask(songDao).execute(song);
     }
-
     public void update(Song song) {
         new UpdateAsyncTask(songDao).execute(song);
     }
-
     public void delete(Song song) {
         new DeleteSongAsyncTask(songDao).execute(song);
     }
-
     public void deleteAllSongs() {
         new DeleteAllSongsAsyncTask(songDao).execute();
     }
-
     public LiveData<List<Song>> getAllSongs() {
         return allSongs;
     }
@@ -73,22 +71,16 @@ public class SongRepository {
                 if (allSongs.getValue().size() == 0 ){
                     insertAll(songsFromServer);
                 }
-                else{
-                    for(Song song :songsFromServer) {
-                        insert(song);
+                else{                // then change to !=
+                    if (allSongs.getValue().size() == songsFromServer.size()) {
+                        for (Song song : songsFromServer) {
+                            insert(song);
+                        }
+                    }else {
+                        Log.d("cs50","local and web databases are equal");
                     }
-
-
                 }
-
-
-//               if (allSongs.getValue().size() != songsFromServer.size()) {
-//                    //Log.d("cs50", "allSongs: " + allSongs.getValue().toString() +
-//                    //        "      songsfromserver: " + songsFromServer.toString());
-//
-//                }
                 Thread.currentThread().interrupt();
-
             }
         });
         thread.start();
@@ -108,7 +100,20 @@ public class SongRepository {
             return null;
         }
     }
+    private static class insertSongWithStatusSongAsyncTask extends AsyncTask<Song, Void, Void> {
+        private SongDao songDao;
 
+        private insertSongWithStatusSongAsyncTask(SongDao songDao) {
+            this.songDao = songDao;
+        }
+        @Override
+        protected Void doInBackground(Song... songs) {
+
+            long i = songDao.insertSongWithStatus(songs[0]);
+            Log.d("cs50",  i + " insertSongWithStatus " + songs[0].getTitle() + " " + songs[0].getFavStatus());
+            return null;
+        }
+    }
     private static class InsertSongAsyncTask extends AsyncTask<Song, Void, Void> {
         private SongDao songDao;
 
@@ -122,7 +127,7 @@ public class SongRepository {
             long i = songDao.insert(songs[0].getId(), songs[0].getTitle(), songs[0].getDescription(),
                     songs[0].getText(), songs[0].getCreated_at(), songs[0].getUpdated_at(),
                     songs[0].getLanguage());
-            Log.d("cs50",  i + " inserted 1 1 1 1 1 1 1 1 " );
+            Log.d("cs50",  i + " inserted songs without favStatus" );
             return null;
         }
     }
@@ -139,7 +144,6 @@ public class SongRepository {
             return null;
         }
     }
-
     private static class DeleteSongAsyncTask extends AsyncTask<Song, Void, Void> {
         private SongDao songDao;
 
@@ -153,7 +157,6 @@ public class SongRepository {
             return null;
         }
     }
-
     private static class DeleteAllSongsAsyncTask extends AsyncTask<Void, Void, Void> {
         private SongDao songDao;
 

@@ -26,6 +26,10 @@ public class SongViewModel extends AndroidViewModel {
     public void insert(Song song) {
         repository.insert(song);
     }
+
+    public void insertSongWithStatus(Song song) {
+        repository.insertSongWithStatus(song);
+    }
     public void update(Song song) {
         repository.update(song);
     }
@@ -37,6 +41,15 @@ public class SongViewModel extends AndroidViewModel {
     }
     public LiveData<List<Song>> getAllSongs() {
         return allSongs;
+    }
+    public void changeFavStatus(Song song){
+        if(song.getFavStatus() == 0){
+            song.setFavStatus(1);
+        }else{
+            song.setFavStatus(0);
+        }
+        insertSongWithStatus(song);
+
     }
 
  }
