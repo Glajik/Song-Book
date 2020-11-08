@@ -1,10 +1,16 @@
 package com.example.songbook;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
+import androidx.room.OnConflictStrategy;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "songs", indices = {@Index("id"), @Index(value = "title")})
+
 public class Song {
     @PrimaryKey()
     private int id;
@@ -13,21 +19,24 @@ public class Song {
     private String description;
     private String created_at;
     private String updated_at;
-    //private  int lang_id;
+    private  String  language;
+    @ColumnInfo(defaultValue = "0")
+    private int favStatus = 0;
 
 
 
 
 
     Song(int id, String title, String text, String description, String created_at,
-         String updated_at){
+         String updated_at, String language){
         this.id = id;
         this.title = title;
         this.text = text;
         this.description = description;
         this.created_at = created_at;
         this.updated_at = updated_at;
-        //this.lang_id = lang_id;
+        this.language = language;
+
 
     }
 
@@ -49,7 +58,20 @@ public class Song {
 
     public String getUpdated_at() {return updated_at;}
 
-    //public int getLang_id() {return lang_id;}
+    public String getLanguage() {
+        return language;
+    }
+    public int getFavStatus() {
+        return favStatus;
+    }
+    public void setFavStatus(int favStatus) {
+        this.favStatus = favStatus;
+    }
+
+
+
+
+
 
 }
 

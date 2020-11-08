@@ -29,7 +29,10 @@ import java.io.IOException;
 import java.net.URL;
 
 public class SongActivity extends AppCompatActivity {
-
+    public static final String EXTRA_ID = "com.example.songbook.EXTRA_ID";
+    public static final String EXTRA_TITLE = "com.example.songbook.EXTRA_TITLE";
+    public static final String EXTRA_DESCRIPTION = "com.example.songbook.EXTRA_DESCRIPTION";
+    public static final String EXTRA_TEXT = "com.example.songbook.EXTRA_TEXT";
     private TextView titleTextView;
     private TextView descriptionTextView;
     private TextView textTextView;
@@ -47,16 +50,9 @@ public class SongActivity extends AppCompatActivity {
         descriptionTextView = findViewById(R.id.description);
         textTextView = findViewById(R.id.text);
 
-        titleTextView.setText(getIntent().getStringExtra("title"));
-        descriptionTextView.setText(getIntent().getStringExtra("description"));
-        textTextView.setText(getIntent().getStringExtra("text"));
-
-
-
-
-
-
-
+        titleTextView.setText(getIntent().getStringExtra(EXTRA_TITLE));
+        descriptionTextView.setText(getIntent().getStringExtra(EXTRA_DESCRIPTION));
+        textTextView.setText(getIntent().getStringExtra(EXTRA_TEXT));
 
     }
 }

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
@@ -26,19 +27,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> implements Filterable {
 
-
+    private List<Song> songs = new ArrayList<>();
     private List<Song> filtered = new ArrayList<>();
-
+    private OnItemClickListener listener;
 
     @Override
     public Filter getFilter() {
@@ -53,6 +49,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
             if (constraint == null || constraint.length() == 0) {
                 filteredSong.addAll(songs);
+                //Log.d("cs50", "songs size is " + filteredSong.size());
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
                 for (Song item : songs) {
@@ -63,7 +60,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             }
 
             FilterResults results = new FilterResults();
-            results.values = filteredSong; // you need to create this variable!
+            results.values = filteredSong;
             results.count = filteredSong.size();
             return results;
         }
@@ -73,160 +70,102 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
             filtered = (List<Song>) results.values;
 
-            notifyDataSetChanged();                   // и заменить в OnBind и getItemCount
+            notifyDataSetChanged();
         }
     }
 
-    public static class SongViewHolder extends RecyclerView.ViewHolder {
+    public class SongViewHolder extends RecyclerView.ViewHolder {
         public LinearLayout containerView;
         public TextView textView;
+        public Button favoriteSong;
 
-        SongViewHolder(View view) {
-            super(view);
-            containerView = view.findViewById(R.id.song_row);
-            textView = view.findViewById(R.id.song_row_text_view);
+        SongViewHolder(final View itemView) {
+            super(itemView);
+            containerView = itemView.findViewById(R.id.song_row);
+            textView = itemView.findViewById(R.id.song_row_text_view);
+            favoriteSong = itemView.findViewById(R.id.liked_button);
 
-            containerView.setOnClickListener(new View.OnClickListener() {
+
+            textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Song current = (Song) containerView.getTag();
                     Intent intent = new Intent(v.getContext(), SongActivity.class);
-                    intent.putExtra("id", current.getId());
-                    intent.putExtra("title", current.getTitle());
-                    intent.putExtra("text", current.getText());
-                    intent.putExtra("description", current.getDescription());
-
-
+                    intent.putExtra(SongActivity.EXTRA_ID, current.getId());
+                    intent.putExtra(SongActivity.EXTRA_TITLE, current.getTitle());
+                    intent.putExtra(SongActivity.EXTRA_TEXT, current.getText());
+                    intent.putExtra(SongActivity.EXTRA_DESCRIPTION, current.getDescription());
                     //мой добавленный Toast
                     String message = "Good choice";
                     Toast.makeText(v.getContext(), message, Toast.LENGTH_SHORT).show();
-
-
                     v.getContext().startActivity(intent);
-
-
                 }
             });
 
+        favoriteSong.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
 
-        }
-
-    }
-
-    private List<Song> songs = new ArrayList<>();
-    private List<Song> songsDb = new ArrayList<>();
-    private RequestQueue requestQueue;
-
-
-    SongAdapter(Context context) {
-        requestQueue = Volley.newRequestQueue(context);
-        // Массиву filtered передаем массив из базы данных
-
-        if(MainActivity.songDatabase.songDao() != null) {
-            songsDb = MainActivity.songDatabase.songDao().getAllsongs();
-            Log.d("cs50", songsDb.toString() + "\n" + MainActivity.songDatabase.songDao().toString() );
-            filtered = songsDb;
-        }
-        // загружаем в базу данных массив с song
-        loadSong();
-
-
-
-
-    }
-     public void loadSong() {
-
-        String url = "https://song-book-289222.ew.r.appspot.com/api/songs";
-        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-               try {
-                    JSONArray results = response.getJSONArray("songs");
-                    for (int i = 0; i < results.length(); i++) {
-                        JSONObject result = results.getJSONObject(i);
-                        Song songTemp = new Song(result.getInt("id"), result.getString("title"),
-                                result.getString("text"), result.getString("description"),
-                                result.getString("created_at"), result.getString("updated_at"));
-                        songs.add(songTemp);
-                        //my new code Compare dates of song and insert the lastest version;
-                        //update(songsDb.get(i), songTemp);
-
-
+                    if(listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(songs.get(position));
                     }
-                    if(songs.isEmpty()){
-                        Log.d("cs50", "Didn't receive data from server");
-                    }
-                    else {
-                        filtered = songs;
-                    }
-
-                    if(songsDb.size() == songs.size()){
-                        Log.d("cs50", "local and server databases are equal");
-
-
-                    }
-                    else {
-                        long[] quanityUpdates = MainActivity.songDatabase.songDao().insert(songs);
-                        Log.d("cs50", String.valueOf(quanityUpdates));
-                                           }
-                    notifyDataSetChanged();
-                } catch (JSONException e) {
-                    Log.e("cs50", "Json error", e);
                 }
+            });
+        }
+        public void setColorFavoriteSongButton(Song current){
+            int favoriteStatus = current.getFavStatus();
+            if( favoriteStatus== 0 ){
+                favoriteSong.setBackgroundResource(R.drawable.ic_shadow_thumb_up_24);
+                Log.d("cs50", " song current " + current.getTitle() + " , favoriteStatus " + favoriteStatus);
+            }else {
+                favoriteSong.setBackgroundResource(R.drawable.ic_baseline_thumb_up_24);
+                Log.d("cs50", " song current " + current.getTitle() + " , favoriteStatus " + favoriteStatus);
 
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("cs50", "Song list error");
-               Log.e("cs50", error.toString());
-            }
-        });
-        requestQueue.add(request);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick (Song song);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener = listener;
+    }
+
 
 
     @NonNull
     @Override
     public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_row, parent, false);
-        return new SongViewHolder(view);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_row, parent, false);
+        return new SongViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
         Song current = filtered.get(position);
         holder.textView.setText(current.getTitle());
+        //Log.d("cs50", "filtered size is " + filtered.size());
         holder.containerView.setTag(current);
+        holder.setColorFavoriteSongButton(current);
+
 
     }
 
     @Override
     public int getItemCount() {
+       // Log.d("cs50", "filtered size is " + filtered.size());
         return filtered.size();
+
     }
 
-    public void reload() {
-
-
+    public void reload(List<Song> songs) {
+        this.songs = songs;
+        getFilter().filter("");
+       // Log.d("cs50", "reload = " + songs.size());
         notifyDataSetChanged();
     }
-    //this metod compare dates of songs with equal id and update the latest version of it
-//    public void update(Song songDb, Song songs){
-//        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss");
-//        try {
-//            Date dateSongDb = formatter.parse(songDb.getUpdated_at());
-//            Date dateSong = formatter.parse(songs.getUpdated_at());
-//            if (dateSongDb.before(dateSong)){
-//                MainActivity.songDatabase.songDao().update(songs);
-//
-//            }
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
-//    }
-
 
 }
 

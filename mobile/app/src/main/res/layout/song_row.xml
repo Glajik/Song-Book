@@ -4,18 +4,37 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/song_row"
-    android:padding="10dp"
+    android:padding="8dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/song_row_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
 
-        android:paddingLeft="10dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="10dp" />
+        <TextView
+            android:id="@+id/song_row_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/liked_button"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="10dp"
+            android:text="example"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/liked_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/ic_shadow_thumb_up_24"
+            android:layout_alignParentEnd="true"
+             />
+    </RelativeLayout>
+
 
 </LinearLayout>

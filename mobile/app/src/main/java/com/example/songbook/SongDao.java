@@ -1,6 +1,8 @@
 package com.example.songbook;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -10,21 +12,23 @@ import java.util.List;
 @Dao
 public interface SongDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insert(List<Song> song);
+    void insertAll(List<Song> songs);
 
-    @Query("SELECT*FROM songs ORDER BY title")
-    List<Song> getAllsongs();
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long insertSongWithStatus(Song song);
 
-//    @Query("UPDATE songs SET title = :title, text = :text, description = :description, " +
-//            "created_at = :created_at, updated_at = :updated_at, lang_id = :lang_id" WHERE id = :id)
-//    void update(int id, String title, String text, String description, String created_at, String updated_at, int lang_id);
+    @Query("SELECT*FROM songs ORDER BY favStatus DESC, title")
+    LiveData<List<Song>> getAllSongs();
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    int update(List<Song> song);
+    void update(Song songs);
 
-    @Query("DELETE FROM songs WHERE id= :id")
-    void delete(int id);
+     @Delete
+    void delete(Song song);
 
     @Query("DELETE FROM songs")
-    void deleteAll();
+    void deleteAllSongs();
+
+//    @Query("SELECT favStatus FROM songs WHERE id = :id")
+//    void getFavStatus(int id);
 }
